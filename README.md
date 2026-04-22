@@ -13,6 +13,16 @@ syntaur setup
 
 ## Install
 
+If you use Claude Code or Codex, install the `syntaur` package — these skills ship automatically with its plugin install flow:
+
+```bash
+npm install -g syntaur
+syntaur install-plugin        # Claude Code → ~/.claude/skills/
+syntaur install-codex-plugin  # Codex → ~/.codex/skills/
+```
+
+For any other AI coding agent (Cursor, OpenCode, custom runtimes), install the skills directly:
+
 ```bash
 npx skills add prong-horn/syntaur-skills
 ```
@@ -22,6 +32,8 @@ Or install a specific skill:
 ```bash
 npx skills add prong-horn/syntaur-skills --skill syntaur-protocol
 ```
+
+> **Note:** If you install `syntaur` AND also run `npx skills add prong-horn/syntaur-skills` on the same machine, you'll get the same skills installed once — they use the same names. The `syntaur` CLI detects existing copies and skips already-current ones.
 
 ## Skills
 
