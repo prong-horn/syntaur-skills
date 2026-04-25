@@ -137,13 +137,15 @@ Omit `--transcript-path` entirely (don't pass an empty string) if no transcript 
 
 ## Step 7: Load Playbooks
 
-Read all playbook files from `~/.syntaur/playbooks/` and treat their content as active behavioral rules:
+Discover the active playbooks via the auto-generated manifest at `~/.syntaur/playbooks/manifest.md`. The manifest is rebuilt on every playbook create/update/delete and on every `syntaur enable-playbook` / `disable-playbook`, and it excludes any playbook the user has disabled — so reading the manifest is the only correct way to enumerate active playbooks.
 
 ```bash
-ls ~/.syntaur/playbooks/*.md 2>/dev/null
+cat ~/.syntaur/playbooks/manifest.md 2>/dev/null
 ```
 
-For each file, read it and follow its directives. Playbooks take precedence over default conventions when they conflict.
+The manifest body lists active playbooks as `- **[Name](slug.md)** — description` lines. For each entry, read the linked file (`~/.syntaur/playbooks/<slug>.md`) and treat its content as active behavioral rules. Playbooks take precedence over default conventions when they conflict.
+
+Do NOT fall back to `ls ~/.syntaur/playbooks/*.md` — that pattern returns disabled playbooks too, which the user has explicitly opted out of. If `manifest.md` is missing or stale, run any playbook command (e.g. `syntaur list-playbooks`) to rebuild it, then re-read.
 
 ## Step 8: Report to User
 
