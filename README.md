@@ -45,6 +45,7 @@ npx skills add prong-horn/syntaur-skills --skill syntaur-protocol
 | `complete-assignment` | Write a handoff and transition an assignment to review or completed. |
 | `create-project` | Create a new project with full scaffolding (manifest + indexes + resources + memories). |
 | `create-assignment` | Create a new assignment within a project (or as a standalone one-off at `~/.syntaur/assignments/<uuid>/`). |
+| `manage-statuses` | List / add / rename / remove / reorder custom assignment statuses (and transitions); writes to `~/.syntaur/config.md`. |
 
 ## How it works
 
