@@ -43,6 +43,7 @@ npx skills add prong-horn/syntaur-skills --skill syntaur-protocol
 | `grab-assignment` | Discover and claim a pending assignment from a project. Sets up working context. |
 | `plan-assignment` | Create a detailed implementation plan for the current assignment. |
 | `complete-assignment` | Write a handoff and transition an assignment to review or completed. |
+| `clear-assignment` | Drop the active assignment from session context without transitioning lifecycle state. Inverse of `grab-assignment`. |
 | `create-project` | Create a new project with full scaffolding (manifest + indexes + resources + memories). |
 | `create-assignment` | Create a new assignment within a project (or as a standalone one-off at `~/.syntaur/assignments/<uuid>/`). |
 | `manage-statuses` | List / add / rename / remove / reorder custom assignment statuses (and transitions); writes to `~/.syntaur/config.md`. |
