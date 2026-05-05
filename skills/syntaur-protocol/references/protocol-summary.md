@@ -22,8 +22,11 @@ Protocol version: **2.0**
           progress.md        # Agent-writable, append-only: timestamped progress log
           comments.md        # CLI-mediated: threaded questions/notes/feedback (via `syntaur comment`)
           scratchpad.md      # Agent-writable: working notes
-          handoff.md         # Agent-writable, append-only: handoff log
+          handoff.md         # Agent-writable, append-only: cross-ticket outbound at completion
           decision-record.md # Agent-writable, append-only: decision log
+          sessions/
+            <session-id>/
+              summary.md     # Agent-writable: per-session continuity (single doc, overwritten)
       resources/
         _index.md            # Derived (read-only)
         <resource-slug>.md   # Shared-writable
@@ -34,6 +37,7 @@ Protocol version: **2.0**
     <assignment-uuid>/       # Standalone assignments: folder = UUID, `project: null`, slug display-only
       assignment.md          # Same schema as project-nested
       plan*.md, progress.md, comments.md, scratchpad.md, handoff.md, decision-record.md
+      sessions/<session-id>/summary.md  # Same per-session continuity as project-nested
   playbooks/
     manifest.md              # Derived: playbook listing (read-only)
     <slug>.md                # User-authored: behavioral rules for agents
@@ -80,3 +84,4 @@ Protocol version: **2.0**
 10. **Comments** are appended to `comments.md` via `syntaur comment <slug> "body" [--type question|note|feedback] [--reply-to <id>]`. Never edit `comments.md` directly. Questions carry a `resolved` flag toggled in the dashboard.
 11. **Cross-assignment work** is requested via `syntaur request <target> "text"` — appends to the target's `## Todos` annotated `(from: <source>)`.
 12. **Agent sessions** in `syntaur.db` must use real agent-runtime session IDs. Synthesized UUIDs are rejected. Plugins for Claude Code / Codex populate `.syntaur/context.json` with the real id via a SessionStart hook; other agents should source it from their runtime and pass `--session-id` explicitly.
+13. **Session continuity** (mid-assignment) lives at `sessions/<session-id>/summary.md` inside the assignment dir — one document per session id, overwritten on every save (via `/save-session-summary`). On resume, pick the latest by `summary.md` file mtime; on Claude Code, the SessionStart hook also stashes the absolute path in `.syntaur/context.json` as `latestSessionSummaryPath`. Older summaries accumulate as immutable history; never delete them. This is **distinct from** `handoff.md`, which is the assignment-level cross-ticket outbound at completion. `syntaur doctor` intentionally ignores `sessions/` — sessions are optional. Codex has no `PreCompact` hook event; Codex agents invoke `/save-session-summary` manually before compaction or session end.

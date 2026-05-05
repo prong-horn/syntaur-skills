@@ -69,7 +69,11 @@ If either command fails, report the error and stop.
 
 ## Step 4: Read Assignment Context and Backfill Workspace
 
-Read the full assignment file. Also read `comments.md` if present (inherited questions / notes). For each `dependsOn` entry, read the dependency's `handoff.md` AND `decision-record.md` so upstream decisions carry forward.
+Read the full assignment file. Also read `comments.md` if present (inherited questions / notes).
+
+For each `dependsOn` entry, read the dependency's `handoff.md` AND `decision-record.md` so upstream decisions carry forward. (`handoff.md` is the **cross-ticket outbound** doc — distinct from session continuity.)
+
+If `<assignmentDir>/sessions/` exists, also read the most recent `<assignmentDir>/sessions/<sid>/summary.md` (selected by `summary.md` file mtime). This is the **mid-assignment session continuity** artifact written by `/save-session-summary` at the end of a prior session of the same assignment. Treat its `What's Next` and `Load-Bearing Context` sections as resume context. (Note: in Claude Code, the SessionStart hook also stashes this path into context.json as `latestSessionSummaryPath` — same semantics; either source is fine.)
 
 From the assignment frontmatter extract: `title`, `workspace.repository`, `workspace.worktreePath`, `workspace.branch`, `dependsOn`, `priority`.
 
@@ -155,4 +159,5 @@ Summarize:
 - Active todos from `## Todos`, including any linked plan files.
 - The workspace path.
 - Any inherited comments/questions from `comments.md`.
-- Suggested next step: `plan-assignment` to create an implementation plan.
+- **Resume context** (if Step 4 found a `sessions/<sid>/summary.md`): a short block citing the session id and the timestamp of that summary's `updated` frontmatter, followed by its `What's Next` bullets. This is mid-assignment continuity — distinct from any cross-ticket handoff.
+- Suggested next step: `plan-assignment` to create an implementation plan, or — if a session summary's `What's Next` is concrete — proceed directly with the next step it names.
