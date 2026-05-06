@@ -50,7 +50,9 @@ Read these files to understand the assignment:
 
 Per-project `agent.md` / `claude.md` were removed in protocol v2.0. Agent-level conventions now live at the repo root (`CLAUDE.md` / `AGENTS.md`) and in `~/.syntaur/playbooks/` (already loaded in Step 2).
 
-If the assignment has dependencies (`dependsOn` in frontmatter), read each dependency's `handoff.md` AND `decision-record.md` for integration context and upstream decisions.
+If the assignment has dependencies (`dependsOn` in frontmatter), read each dependency's `handoff.md` AND `decision-record.md` for integration context and upstream decisions. (`handoff.md` is cross-ticket outbound — distinct from session continuity.)
+
+If `<assignmentDir>/sessions/` exists, also read the most recent `sessions/<sid>/summary.md` (selected by `summary.md` file mtime). This is mid-assignment continuity from a prior session of the same assignment — its `What's Next`, `Open Questions`, and `Load-Bearing Context` sections are direct planning inputs when resuming work that was already in flight.
 
 ## Step 4: Explore Workspace (if set)
 

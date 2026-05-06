@@ -22,8 +22,9 @@ You may only write to files inside your currently-claimed assignment folder:
 | `plan*.md` | Versioned implementation plans (`plan.md`, `plan-v2.md`, ...). When superseded, the old plan's todo is marked superseded but the file itself is never deleted. |
 | `progress.md` | Append-only, timestamped progress log (newest first). |
 | `scratchpad.md` | Working notes. |
-| `handoff.md` | Append-only handoff log. |
+| `handoff.md` | Append-only **assignment-level cross-ticket outbound** at completion (written by `complete-assignment`). |
 | `decision-record.md` | Append-only decision log (Status / Context / Decision / Consequences). |
+| `sessions/<session-id>/summary.md` | **Per-session continuity** for resume across sessions of the same agent on this assignment. Single document per session id, overwritten on every save (written by `/save-session-summary`). Not the same as `handoff.md`. |
 
 Path patterns:
 - Project-nested: `~/.syntaur/projects/<project>/assignments/<your-assignment-slug>/`

@@ -26,8 +26,9 @@ Respect file ownership boundaries. The Claude Code and Codex plugins enforce the
    - `plan*.md` (versioned — `plan.md`, `plan-v2.md`, etc.)
    - `progress.md` (append-only, timestamped)
    - `scratchpad.md`
-   - `handoff.md` (append-only)
+   - `handoff.md` (append-only — **assignment-level cross-ticket outbound**)
    - `decision-record.md` (append-only)
+   - `sessions/<sessionId>/summary.md` (**session-scoped mid-assignment continuity** — single document per session id, overwritten on save)
 2. **Project-level shared files:**
    - `~/.syntaur/projects/<project>/resources/<slug>.md`
    - `~/.syntaur/projects/<project>/memories/<slug>.md`
@@ -49,6 +50,22 @@ Respect file ownership boundaries. The Claude Code and Codex plugins enforce the
 
 Per-project `agent.md` / `claude.md` do NOT exist in protocol v2.0. Agent-level conventions now live at the repo root (`CLAUDE.md` / `AGENTS.md`) and in `~/.syntaur/playbooks/`.
 
+## Session Continuity vs Cross-Ticket Handoff
+
+Two related but distinct artifacts. Conflating them is a recurring mistake.
+
+| Artifact | Scope | When written | Audience | Written by |
+|---|---|---|---|---|
+| `handoff.md` | Assignment-level | At completion | The next ticket / agent / human reviewer | `complete-assignment` skill |
+| `sessions/<sessionId>/summary.md` | Session-scoped | Mid-assignment, before compaction or at session end | A future session of the same agent on the same assignment | `save-session-summary` skill |
+
+Rules:
+- One `summary.md` per session id directory; overwrite on every save.
+- Older `sessions/<sid>/summary.md` files accumulate as immutable history — never delete them, even at completion.
+- Resume picks the latest by `summary.md` file mtime. The Claude Code SessionStart hook also stashes that absolute path into `.syntaur/context.json` as `latestSessionSummaryPath` for convenience; either source is fine.
+- Codex has no `PreCompact` hook — Codex agents invoke `/save-session-summary` manually before compaction or session end.
+- `syntaur doctor` intentionally does NOT validate `sessions/` — sessions are optional and absence is not anomalous.
+
 ## Current Assignment Context
 
 If `.syntaur/context.json` exists in the current working directory, read it before making changes. Fields you will see:
@@ -60,6 +77,7 @@ If `.syntaur/context.json` exists in the current working directory, read it befo
 - `workspaceRoot` — absolute path to the code workspace
 - `sessionId` — real agent-runtime session id (never a synthesized UUID)
 - `transcriptPath` — absolute path to the agent's rollout/transcript file, if known
+- `latestSessionSummaryPath` — absolute path to the most recent `sessions/<sid>/summary.md` (Claude Code SessionStart hook resolves this; `null` if none)
 
 ## Required Reading Order
 
@@ -71,8 +89,9 @@ When starting work on an existing assignment, read these in order:
 4. `<assignmentDir>/assignment.md`
 5. `<assignmentDir>/comments.md` if present — inherited questions / notes
 6. Latest `<assignmentDir>/plan*.md` (pick the newest)
-7. `<assignmentDir>/handoff.md` — history
-8. For each `dependsOn` entry: the dependency's `handoff.md` AND `decision-record.md` — upstream integration context and accepted decisions carry forward
+7. `<assignmentDir>/handoff.md` — cross-ticket outbound history (entries from prior agents/humans handing this assignment off)
+8. The latest `<assignmentDir>/sessions/<sid>/summary.md` if present (mid-assignment resume context from a prior session of this assignment) — selected by `summary.md` file mtime, or via `latestSessionSummaryPath` in context.json on Claude Code
+9. For each `dependsOn` entry: the dependency's `handoff.md` AND `decision-record.md` — upstream integration context and accepted decisions carry forward
 
 ## Lifecycle Commands
 
@@ -108,7 +127,7 @@ ls ~/.syntaur/playbooks/*.md 2>/dev/null
 - Append milestones to `progress.md` — do NOT add a `## Progress` section to `assignment.md` (v2.0 moved progress to its own file).
 - `## Todos` in `assignment.md` is an informal markdown checklist. Items may be simple tasks or markdown links to plan files. When a plan is superseded, mark the old todo as `- [x] ~~Execute [plan](./plan.md)~~ (superseded by plan-v2)` — never delete. `## Todos` is also the landing spot for cross-assignment `syntaur request` entries.
 - Record questions / notes / feedback via `syntaur comment` — never edit `comments.md` directly. Do NOT set status to `blocked` just because there is an open question; block only for a real external dependency with a `--reason`.
-- Write handoffs with enough context for another agent or human to continue cleanly. Record decisions in `decision-record.md` with Status / Context / Decision / Consequences — downstream dependents auto-load these during grab.
+- Write `handoff.md` entries (via `complete-assignment`) with enough context for another agent or human to continue cleanly **across tickets**. Write `sessions/<sid>/summary.md` (via `/save-session-summary`) for mid-assignment continuity within the same assignment across sessions of the same agent. Do not mix the two. Record decisions in `decision-record.md` with Status / Context / Decision / Consequences — downstream dependents auto-load these during grab.
 - Commit frequently with messages referencing the assignment slug.
 
 ## References

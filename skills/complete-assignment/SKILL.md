@@ -63,6 +63,8 @@ Do NOT add a `## Progress` section to `assignment.md` — progress entries live 
 
 ## Step 4: Write Handoff Entry
 
+`handoff.md` is the **assignment-level cross-ticket outbound** doc — written here, at completion, for the next ticket / agent / human reviewer. It is NOT the mid-assignment session continuity artifact; that lives at `<assignmentDir>/sessions/<sid>/summary.md` and is written by `/save-session-summary`. Any `sessions/*/summary.md` files are reference-only at completion time and MUST NOT be deleted — they remain as immutable historical context.
+
 Read `<assignmentDir>/handoff.md` to see its current content and frontmatter.
 
 Append a new handoff entry to the markdown body. Read the current `handoffCount` from the frontmatter and use `handoffCount + 1` as the entry number. The entry must follow this format:
