@@ -1,57 +1,51 @@
-# syntaur-skills
+# syntaur-skills (archived)
 
-Agent-agnostic skills for the [Syntaur](https://github.com/prong-horn/syntaur) coordination protocol. Works with any AI coding agent — Claude Code, Cursor, Codex, OpenCode, and more.
+> **This repo is archived.** Skills moved into the main [`prong-horn/syntaur`](https://github.com/prong-horn/syntaur) repo as of `syntaur@0.8.0` (May 2026).
 
-## Prerequisites
+## Where to find the skills now
 
-Install the Syntaur CLI:
+[`prong-horn/syntaur/skills/`](https://github.com/prong-horn/syntaur/tree/main/skills)
 
-```bash
-npm install -g syntaur
-syntaur setup
-```
+11 skills ship from there:
 
-## Install
+- `syntaur-protocol`
+- `grab-assignment`
+- `plan-assignment`
+- `complete-assignment`
+- `create-assignment`
+- `create-project`
+- `manage-statuses`
+- `clear-assignment`
+- `save-session-summary`
+- `track-session` (Claude Code agent session registration)
+- `track-server` (tmux dev-server tracking; was previously named `track-session` here for Codex — renamed in 0.8.0 to avoid collision)
 
-If you use Claude Code or Codex, install the `syntaur` package — these skills ship automatically with its plugin install flow:
+## How to install
 
-```bash
-npm install -g syntaur
-syntaur install-plugin        # Claude Code → ~/.claude/skills/
-syntaur install-codex-plugin  # Codex → ~/.codex/skills/
-```
-
-For any other AI coding agent (Cursor, OpenCode, custom runtimes), install the skills directly:
-
-```bash
-npx skills add prong-horn/syntaur-skills
-```
-
-Or install a specific skill:
+### Cross-agent (recommended)
 
 ```bash
-npx skills add prong-horn/syntaur-skills --skill syntaur-protocol
+npx skills add prong-horn/syntaur
 ```
 
-> **Note:** If you install `syntaur` AND also run `npx skills add prong-horn/syntaur-skills` on the same machine, you'll get the same skills installed once — they use the same names. The `syntaur` CLI detects existing copies and skips already-current ones.
+Works for Claude Code, Codex, Cursor, OpenCode, Gemini CLI, Cline, Copilot, and ~45 other agents via [skills.sh](https://skills.sh).
 
-## Skills
+### Claude Code plugin marketplace
 
-| Skill | Description |
-|-------|-------------|
-| `syntaur-protocol` | Core protocol knowledge — write boundaries, lifecycle states, conventions. Auto-activates when working with Syntaur files. |
-| `grab-assignment` | Discover and claim a pending assignment from a project. Sets up working context. |
-| `plan-assignment` | Create a detailed implementation plan for the current assignment. |
-| `complete-assignment` | Write a handoff and transition an assignment to review or completed. |
-| `clear-assignment` | Drop the active assignment from session context without transitioning lifecycle state. Inverse of `grab-assignment`. |
-| `create-project` | Create a new project with full scaffolding (manifest + indexes + resources + memories). |
-| `create-assignment` | Create a new assignment within a project (or as a standalone one-off at `~/.syntaur/assignments/<uuid>/`). |
-| `manage-statuses` | List / add / rename / remove / reorder custom assignment statuses (and transitions); writes to `~/.syntaur/config.md`. |
+Install the syntaur plugin via Claude Code's `/plugin` UI, or run `syntaur install-plugin --enable`.
 
-## How it works
+### syntaur CLI (full feature set)
 
-Syntaur is a coordination protocol for AI agents built on markdown files. Projects contain assignments, assignments have lifecycle states, and agents follow write boundary rules about which files they can modify. Everything lives under `~/.syntaur/` and is managed via the `syntaur` CLI.
+```bash
+npm install -g syntaur@latest
+```
 
-These skills teach your agent the protocol so it can participate in Syntaur-coordinated work — regardless of which coding agent you use.
+## Why was this repo retired?
 
-For platform-specific integrations (hooks, commands, sandbox enforcement), see the [Syntaur plugin system](https://github.com/prong-horn/syntaur).
+When the syntaur project was small, the skills lived in their own repo and were vendored into the main syntaur repo as a git submodule. As the project matured this caused real friction: two repos to keep in lockstep, duplicate skill copies for Claude users (vendored + platform), no clean cross-agent install story, and a recurring "plugin invisible to Claude" bug from the install flow.
+
+`syntaur@0.8.0` collapses everything to a single canonical `<repo>/skills/` directory inside the main repo, which is now `npx skills add`-compatible directly. See the [v0.8.0 release notes](https://github.com/prong-horn/syntaur/releases/tag/v0.8.0) for the full design.
+
+## Historical content
+
+Git history of skills authored before 0.8.0 is preserved on the `main` branch of this archived repo. The same skills (with `manage-statuses`, `clear-assignment`, `save-session-summary` added and `track-server` renamed) live at `prong-horn/syntaur/skills/` going forward.
